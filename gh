@@ -71,8 +71,8 @@ function cpFromVPS() {
 
 function create() {
 	if [[ -z $1 ]]; then
-		echo "Usage: $0 create <repo>"
-		echo "Creates <repo>"
+		echo "Usage: $0 create <repo> [<description>]"
+		echo "Creates <repo> [with <description>]"
 		exit 1
 	fi
 	repo="$1"
