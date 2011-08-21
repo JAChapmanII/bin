@@ -1,4 +1,7 @@
 #!/bin/bash
+# gdd: quickly compile a D program (poorly hacky script)
+#   automatically links against curl if it looks like that is needed
+#   does not compile if there is already an executable newer than main
 
 main="${1-main}"
 main="${main/%.d/}"
@@ -20,9 +23,6 @@ if [[ -n "$(cat $main.d | perl -ne '
 fi
 
 if [[ "$main.d" -nt "$main" ]]; then
-	#gdc -o $main{,.d} -pipe -O ${LDFLAGS} $@
-	#gdmd $main.d -pipe -O -w -wi -cov -inline -release ${LDFLAGS} $@
-	#gdmd $main.d -pipe -O -w -wi -inline -release ${LDFLAGS} $@
 	gdmd $main.d -pipe -O -w -wi ${LDFLAGS} $@
 	[[ -f "a.out" ]] && mv a.out $main
 	[[ -f "$main.o" ]] && rm $main.o
