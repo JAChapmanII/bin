@@ -1,4 +1,6 @@
 #!/bin/bash
+# txz: create a .tar.xz of a directory
+#    automatically increments a suffix if a previous archive exists
 
 EXT="tar.xz"
 if [[ -z "$1" ]] || [[ ! -d "$1" ]]; then

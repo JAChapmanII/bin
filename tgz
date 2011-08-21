@@ -1,9 +1,11 @@
 #!/bin/bash
+# tgz: create a .tar.gz of a directory
+#    automatically increments a suffix if a previous archive exists
 
 EXT="tar.gz"
 if [[ -z "$1" ]] || [[ ! -d "$1" ]]; then
 	echo "Usage: $0 <directory>"
-	echo "Creates a ${EXT} of directory."
+	echo "Creates a .${EXT} of directory."
 	exit 1
 fi
 

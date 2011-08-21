@@ -1,4 +1,6 @@
 #!/bin/bash
+# volume: pretty hacky command line volume control for use in scripts and
+#    keybindings in xmonad
 
 setc="amixer set Master "
 

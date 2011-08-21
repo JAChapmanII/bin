@@ -1,4 +1,5 @@
 #!/bin/sh
+# xvt: run tmux in an urxvt client (starting daemon if necessary)
 
 if [ -z `pgrep urxvtd` ]; then
 	urxvtd -q -o -f

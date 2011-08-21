@@ -1,4 +1,7 @@
 #!/bin/bash
+# mkpass: make a password using /dev/urandom.
+#    defaults to being the full :graph: alphabet and 20 long. The first
+#    argument is a substitute alphabet and the second is a substitute length
 
 SET="${1-[:graph:]}"
 LEN="${2-20}"

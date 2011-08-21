@@ -1,4 +1,7 @@
 #!/bin/bash
+# loop: repeat a command every so often indefinitely. There is probably
+#    something for this, but so far I've just been doing a while true; loop
+#    which is annoying to break out of in terminal
 
 command="$1"
 time="${2-30s}"

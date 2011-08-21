@@ -1,4 +1,7 @@
 #!/bin/bash
+# gh: provides some useful command line github interface things...
+#    numerous of these utilities are specific to me as they interface with my
+#    VPS along with github. Though, the token/user thing is config'd away :D
 
 if [[ -z $1 ]]; then
 	echo "Usage: $0 <command> [[<repo>] <args>]"

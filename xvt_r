@@ -1,4 +1,5 @@
 #!/bin/sh
+# xvt_r: run an instance of the urxvt client (starts daemon if needed)
 
 if [ -z `pgrep urxvtd` ]; then
 	urxvtd -q -o -f

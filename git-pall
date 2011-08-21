@@ -1,4 +1,5 @@
 #!/bin/bash
+# git-pall: "git pall" pushes to both my VPS and github at the same time
 
 declare -A users
 users["jail"]="CodeBlock"

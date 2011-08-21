@@ -1,4 +1,7 @@
 #!/bin/bash
+# mssha: poorly constructed replacement for ssh-keychain... or something. I
+#    wrote it before I knew about that program. Does what I need it to do, so
+#    I never switched
 
 EVF="${XDG_CONFIG_HOME}/evars"
 # We shouldn't do much of anything in a schroot

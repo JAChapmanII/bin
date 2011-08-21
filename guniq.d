@@ -1,4 +1,5 @@
 #!/usr/bin/dmd -run
+// guniq: print only the lines which have not occurred in the input previously
 import std.stdio;
 
 void main() {
