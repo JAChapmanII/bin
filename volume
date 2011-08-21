@@ -1,0 +1,52 @@
+#!/bin/bash
+
+setc="amixer set Master "
+
+lim="$(amixer get Master | sed -n 's/^  Limits: Playback \([0-9]*\) - \([0-9]*\)/\1 \2/p')"
+ulim="$(echo $lim | tr ' ' '\n' | tail -n1)"
+dlim="$(echo $lim | tr ' ' '\n' | head -n1)"
+
+while [[ -n $1 ]]; do
+	cur="$(amixer get Master | sed -n 's/^  Mono: Playback \([0-9]*\) .*/\1/p')"
+	imute="$(amixer get Master | sed -n 's/^  Mono: .* \[\([a-z]*\)\]$/\1/p')"
+
+	nd="$(echo $cur - 1 | bc)"
+	if (( $nd < $dlim )); then
+		nd=$dlim
+	fi
+
+	nu="$(echo $cur + 1 | bc)"
+	if (( $nu > $ulim )); then
+		nu=$ulim
+	fi
+
+	case $1 in
+		[Uu]*|+)
+			eval $setc $nu &>/dev/null
+			;;
+		[Dd]*|-)
+			eval $setc $nd &>/dev/null
+			;;
+		[Mm][Aa]*)
+			eval $setc $ulim &>/dev/null
+			;;
+		[Mm][ii]*)
+			eval $setc $dlim &>/dev/null
+			;;
+		[Mm][Uu]*)
+			if [[ "$imute" = "on" ]]; then
+				eval $setc mute &>/dev/null
+			else
+				eval $setc unmute &>/dev/null
+			fi
+			;;
+		[Ll]*)
+			echo "$dlim $ulim"
+			;;
+		[Cc]*|*)
+			echo $cur
+			;;
+	esac
+	shift
+done
+

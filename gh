@@ -1,0 +1,118 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+	echo "Usage: $0 <command> [[<repo>] <args>]"
+	echo "Runs subcommand <command> passing <repo> and <args> to it."
+	echo "<repo> is usually first, but may be omitted with certain functions."
+	exit 1
+fi
+
+GH_URL="https://github.com/api/v2/json"
+unset GH_USER
+unset GH_TOKEN
+
+source ${XDG_CONFIG_HOME}/gh_config
+if [[ -z ${GH_USER} ]] || [[ -z ${GH_TOKEN} ]]; then
+	echo "Please make sure you set GH_{USER,TOKEN} in $XDG_CONFIG_HOME/gh_config"
+	exit 1
+fi
+
+GH_AUTH="${GH_USER}/token:${GH_TOKEN}"
+
+VS_CLONE="git@JAChapmanII.net:"
+GH_CLONE="git@github.com:${GH_USER}/"
+
+function exists() {
+	if [[ -z $1 ]]; then
+		echo "Usage: $0 exists <repo>"
+		echo "Checks to see if <repo> exists"
+		exit 1
+	fi
+	repo="$1"
+
+	res="$(curl -s -u "${GH_AUTH}" "${GH_URL}/repos/show/${GH_USER}")"
+	repos=( $(echo $res | tr , '\n' | sed -n 's/^"name":"\([^"]*\)"$/\1/p') )
+
+	if [[ -z $(echo ${repos[@]} | tr ' ' '\n' | grep -Ei "^$repo$") ]]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+function cpFromVPS() {
+	if [[ -z $1 ]]; then
+		echo "Usage: $0 cpFromVPS <repo>"
+		echo "Clones <repo> from VPS, pushes to github"
+		exit 1
+	fi
+	repo="$1"
+
+	if ! exists $repo; then
+		echo "You must create the remote repository first"
+		exit 1
+	fi
+
+	tmp="$(mktemp -d)"
+	cd $tmp
+
+	git clone "${VS_CLONE}$repo"
+	cd $repo
+	git remote rm origin
+	git remote add origin "${GH_CLONE}$repo.git"
+	git push -u origin master
+
+	cd ../..
+	rm -fr $tmp
+}
+
+function create() {
+	if [[ -z $1 ]]; then
+		echo "Usage: $0 create <repo>"
+		echo "Creates <repo>"
+		exit 1
+	fi
+	repo="$1"
+
+	pdata="name=$repo"
+	if [[ -n "$2" ]]; then
+		pdata="$pdata&description=$(echo $2 | sed 's/ /%20/g')"
+	fi
+	pdata="$pdata&homepage=JAChapmanII.net%2Fcode%2F$repo"
+	res="$(curl -s -u "${GH_AUTH}" -d "$pdata" "${GH_URL}/repos/create")"
+	if [[ -n "$(echo $res | grep "error" -i)" ]]; then
+		echo $res | json_reformat
+		exit 1
+	else
+		echo "Successfully created $repo"
+	fi
+}
+
+function push() {
+	repo="${1-$(basename $(pwd))}"
+
+	if [[ "jail" == $repo ]]; then
+		git push "git@github.com:CodeBlock/Jail"
+	else
+		git push "git@github.com:JAChapmanII/$repo"
+	fi
+}
+
+command="$1"; shift
+case $command in
+	exists)
+		if exists $@; then
+			echo "Repository $1 exists"
+		else
+			echo "Repository $1 does not exist!"
+		fi
+		;;
+	cpFromVPS) cpFromVPS $@ ;;
+	create) create $@ ;;
+	push) push $@ ;;
+	*)
+		echo "$command: subcommand not found"
+		exit 1
+		;;
+esac
+

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+declare -A users
+users["jail"]="CodeBlock"
+
+repo="${1-$(basename $(pwd))}"
+
+git push "git@jachapmanii.net:$repo"
+
+if [[ -z "${users[$repo]}" ]]; then
+	git push "git@github.com:JAChapmanII/$repo"
+else
+	git push "git@github.com:${users[$repo]}/$repo"
+fi
+
+wait
+

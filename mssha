@@ -1,0 +1,16 @@
+#!/bin/bash
+
+EVF="${XDG_CONFIG_HOME}/evars"
+# We shouldn't do much of anything in a schroot
+if [[ -z "$SCHROOT_SESSION_ID" ]]; then
+	if [[ -n "$(pgrep -u $(whoami) ssh-agent)" ]]; then
+		source "$EVF"
+	else
+		ssh-agent > "$EVF"
+		sed -i 's/^echo.*/echo -n "[S] "/' "$EVF"
+		chmod +x "$EVF"
+
+		source "$EVF"
+	fi
+fi
+

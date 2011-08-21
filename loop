@@ -1,0 +1,10 @@
+#!/bin/bash
+
+command="$1"
+time="${2-30s}"
+
+while true; do
+	eval $command
+	sleep $time
+done
+

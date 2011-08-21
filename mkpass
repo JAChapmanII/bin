@@ -1,0 +1,7 @@
+#!/bin/bash
+
+SET="${1-[:graph:]}"
+LEN="${2-20}"
+
+cat /dev/urandom | tr -dc "$SET" | fold -w $LEN | head
+

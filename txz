@@ -1,0 +1,16 @@
+#!/bin/bash
+
+EXT="tar.xz"
+if [[ -z "$1" ]] || [[ ! -d "$1" ]]; then
+	echo "Usage: $0 <directory>"
+	echo "Creates a .${EXT} of directory."
+	exit 1
+fi
+
+DIR="${1/%\//}"; SUF="000"
+while [[ -f "${DIR}_${SUF}.${EXT}" ]]; do
+	SUF="$(seq -w ${SUF} $(echo ${SUF}+1|bc) | tail -n1)"
+done
+
+tar cJf "${DIR}_${SUF}.${EXT}" "$1"
+

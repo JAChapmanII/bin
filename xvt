@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -z `pgrep urxvtd` ]; then
+	urxvtd -q -o -f
+fi
+
+exec urxvtc -e 'tmux'
+

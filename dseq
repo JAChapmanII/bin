@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]; then
+	echo "Usage: $0 <url> (<start> <end>|<seq1> <seq2> <seq3> [... <seqN>])"
+	exit 1
+fi
+
+URL="$1"; shift;
+
+if [[ "$#" -eq 2 ]]; then
+	SEQ="$(seq -w $1 $2)"
+else
+	SEQ="$@"
+fi
+
+ext="$(basename $URL | sed 's/.*\.\(.*\)$/\1/')"
+if [[ -z $ext ]]; then
+	ext="jpg"
+fi
+
+for i in $SEQ; do
+	echo wget -q -O \"$i.$ext\" \"$(eval "echo $URL")\"
+	wget -q -O "$i.$ext" "$(eval "echo $URL")"
+done
+

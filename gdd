@@ -1,0 +1,30 @@
+#!/bin/bash
+
+main="${1-main}"
+main="${main/%.d/}"
+if [[ ! -f "$main.d" ]]; then
+	echo "Main file does not exist"
+	if [[ -z "$1" ]]; then
+		echo "[You didn't specify one, so we assumed main.d]"
+	fi
+	exit 1
+fi
+shift
+
+LDFLAGS=
+if [[ -n "$(cat $main.d | perl -ne '
+		if(m/^\s*import\s+([^;]*\s*,\s*)*etc.c.curl(\s*,\s*+[^;]*)?\s*;/) {
+			print"$_";
+		}')" ]]; then
+	LDFLAGS="${LDFLAGS} -L-lcurl"
+fi
+
+if [[ "$main.d" -nt "$main" ]]; then
+	#gdc -o $main{,.d} -pipe -O ${LDFLAGS} $@
+	#gdmd $main.d -pipe -O -w -wi -cov -inline -release ${LDFLAGS} $@
+	#gdmd $main.d -pipe -O -w -wi -inline -release ${LDFLAGS} $@
+	gdmd $main.d -pipe -O -w -wi ${LDFLAGS} $@
+	[[ -f "a.out" ]] && mv a.out $main
+	[[ -f "$main.o" ]] && rm $main.o
+fi
+
