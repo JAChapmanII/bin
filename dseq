@@ -3,7 +3,7 @@
 
 if [[ -z "$1" ]]; then
 	echo "Usage: $0 <url> (<start> <end>|<seq1> <seq2> <seq3> [... <seqN>])"
-	echo "Downloads a series of URLs"
+	echo "Downloads a series of URLs [<url> is a function of \$i]"
 	exit 1
 fi
 
