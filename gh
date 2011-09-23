@@ -76,10 +76,11 @@ function create() {
 		exit 1
 	fi
 	repo="$1"
+	shift
 
 	pdata="name=$repo"
-	if [[ -n "$2" ]]; then
-		pdata="$pdata&description=$(echo $2 | sed 's/ /%20/g')"
+	if [[ -n "$1" ]]; then
+		pdata="$pdata&description=$(echo $* | sed 's/ /%20/g')"
 	fi
 	pdata="$pdata&homepage=JAChapmanII.net%2Fcode%2F$repo"
 	res="$(curl -s -u "${GH_AUTH}" -d "$pdata" "${GH_URL}/repos/create")"
