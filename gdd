@@ -23,7 +23,7 @@ if [[ -n "$(cat $main.d | perl -ne '
 fi
 
 if [[ "$main.d" -nt "$main" ]]; then
-	gdmd $main.d -pipe -O -w -wi ${LDFLAGS} $@
+	gdmd $main.d -g -pipe -O -w -wi ${LDFLAGS} $@
 	[[ -f "a.out" ]] && mv a.out $main
 	[[ -f "$main.o" ]] && rm $main.o
 fi
