@@ -1,10 +1,17 @@
 #!/bin/bash
 # git-pall: "git pall" pushes to both my VPS and github at the same time
 
+declare -A rMap
+rMap[".config"]="conf-$(hostname)"
+
 declare -A users
 users["jail"]="CodeBlock"
 
 repo="${1-$(basename $(pwd))}"
+
+if [[ -n "${rMap[$repo]}" ]]; then
+	repo="${rMap[$repo]}"
+fi
 
 git push "git@jachapmanii.net:$repo"
 
