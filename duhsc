@@ -1,0 +1,9 @@
+#!/bin/bash
+# duhsc: simple way to figure out space usage in a directory
+
+if [[ -z $1 ]]; then
+	du -hsc   *  | sort -h | grep -v '^0\s'
+else
+	du -hsc "$@" | sort -h
+fi
+
