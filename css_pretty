@@ -1,0 +1,12 @@
+#!/bin/bash
+# css_pretty: simple sed pipe to reformat CSS, probably could be an alias
+
+if [[ -z $1 ]]; then
+	echo "Usage: $0 <file>"
+	echo "for stdin, use /dev/stdin"
+	exit 0
+fi
+
+sed -e 's/[{};]/&\n/g' -e 's/}/\n}/g' "$1" | \
+	sed '/^\s*$/d' | sed '/^[^{}]*$/s/^/\t/'
+
