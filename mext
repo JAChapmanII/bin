@@ -1,0 +1,35 @@
+#!/bin/bash
+# mext: simple script to try to decrypt/mount my external hard drive
+
+DEFAULT_DEVICE="f"
+
+l="${1-${DEFAULT_DEVICE}}"
+if [[ -z $1 ]]; then
+	if [[ $(ls /dev/sd* | grep 4 | wc -l) -gt 1 ]]; then
+		echo "Guessing 'f' as block device"
+		l="f"
+	else
+		l="$(ls /dev/sd* | grep 4 | sed 's/.*\(.\)4$/\1/')"
+		if [[ -z $l ]]; then
+			echo "Could not guess block device!"
+			exit 1
+		fi
+		echo "Guesssing '$l' as block device"
+	fi
+fi
+m="edata"
+s=""
+if [[ -b /dev/mapper/$m ]]; then
+	echo "/dev/mapper/$m exists"
+	s="1"
+	while [[ -b /dev/mapper/$m$s ]]; do
+		echo "/dev/mapper/$m$s exists"
+		s=$(($s + 1))
+	done
+fi
+
+echo "Mounting /dev/sd$l on /dev/mapper/$m$s"
+
+cryptsetup luksOpen /dev/sd${l}4 $m$s
+mount /dev/mapper/$m$s /mnt/enext
+
