@@ -1,0 +1,24 @@
+#!/bin/bash
+# dspace: small script to print disk space. Main purpose is to remove the
+#   mounts from df which I don't want to see.
+
+ARGS="-H --total"
+DISCLUDE=(
+	'/boot' '/dev$' '/run' # general system things
+	'^rewritefs'           # peoples homes
+	'/dev/mapper/root'     # encrypted root
+	'/opt/arch32'          # arch32 bundled systems
+)
+
+temp="$(mktemp)"
+df ${ARGS} > "$temp"
+
+for (( i = 0; i < ${#DISCLUDE[@]}; i++ )); do
+	grep -v "${DISCLUDE[$i]}" "$temp" | sponge "$temp"
+done
+
+sed -r -e 's/\s+/\t/g' -e 's/ted\t/ted /' -e 's/Use%/Usage/' "$temp" | \
+	column -t -s$'\t'
+
+rm "$temp"
+
