@@ -1,0 +1,9 @@
+#!/bin/bash
+# mkyear: make a folder with a year number with month folders inside
+
+year="${1-$(date +%Y)}"
+
+mkdir -p $year
+cd $year
+mkmonths
+

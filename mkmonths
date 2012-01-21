@@ -1,0 +1,16 @@
+#!/bin/bash
+# mkmonths: make a folder for each month that will sort properly
+
+mkdir -p "01 January"
+mkdir -p "02 February"
+mkdir -p "03 March"
+mkdir -p "04 April"
+mkdir -p "05 May"
+mkdir -p "06 June"
+mkdir -p "07 July"
+mkdir -p "08 August"
+mkdir -p "09 September"
+mkdir -p "10 October"
+mkdir -p "11 November"
+mkdir -p "12 December"
+
