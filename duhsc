@@ -2,12 +2,9 @@
 # duhsc: simple way to figure out space usage in a directory
 
 if [[ -z $1 ]]; then
-	if [[ "$HOME" == $(pwd) ]]; then
-		du -hsc .config .local .cache * | sort -h | grep -v '^0\s'
-	else
-		du -hsc * | sort -h | grep -v '^0\s'
-	fi
+	find ./ -mindepth 1 -maxdepth 1 -print0 | xargs -0 du --si -sc | \
+		sort -h | grep -v '^0\s'
 else
-	du -hsc "$@" | sort -h
+	du --si -sc "$@" | sort -h
 fi
 
