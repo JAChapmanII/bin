@@ -1,5 +1,5 @@
 #!/bin/bash
 # sshot: scrot with a different default name
 
-scrot '%y%m%d%H%M.png'
+scrot "$@" '%y%m%d%H%M.png'
 
