@@ -1,0 +1,24 @@
+#!/bin/bash
+# pjson: simple script to download and pretty print json
+
+if [[ -z $1 ]]; then
+	echo "Usage: $0 <URL>"
+	exit 0
+fi
+
+tmp="$(mktemp)"
+wget -q -O - "$1" > "$tmp"
+if [[ $(cat "$tmp" | wc -l) -eq 0 ]]; then
+	echo "psjon: error: could not download page: $1"
+	cat "$tmp"
+	rm "$tmp"
+	exit 1
+else
+	cat "$tmp" | python -mjson.tool
+	if [[ $? -ne 0 ]]; then
+		cat "$tmp"
+	fi
+	rm "$tmp"
+	exit 0
+fi
+
