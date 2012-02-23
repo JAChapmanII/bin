@@ -1,0 +1,6 @@
+#!/bin/bash
+# msize: create a file with the sizes of things in ./
+
+duhsc > dir_sizes
+cat     dir_sizes
+
