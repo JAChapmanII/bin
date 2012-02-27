@@ -1,0 +1,6 @@
+#!/bin/bash
+# xmrun: simple script to run a few java apps in Xmonad
+
+export _JAVA_AW_WM_NONREPARENTING=1
+exec "$@"
+
