@@ -4,6 +4,6 @@
 ulimit -c unlimited
 "$@"
 if [[ "$?" -eq "139" ]]; then
-	gdb -q $1 core_dump -x ~/bin/backtrace
+	gdb -q $1 core -x ~/bin/backtrace
 fi
 
