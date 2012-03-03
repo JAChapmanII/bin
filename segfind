@@ -1,9 +1,12 @@
 #!/bin/bash
 # segfind: run a program and provide a backtrace through gdb if it segfaults.
 
+# Add this to /etc/sysctl.conf to set the core dump file names
+#   kernel.core_pattern = %e_core
+
 ulimit -c unlimited
 "$@"
 if [[ "$?" -eq "139" ]]; then
-	gdb -q $1 core -x ~/bin/backtrace
+	gdb -q "$1" "core_$1" -x ~/bin/backtrace
 fi
 
