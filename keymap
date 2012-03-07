@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ -z $DISPLAY ]]; then
+	export DISPLAY=:0
+fi
+
 setxkbmap "${1-dvorak}"
 setxkbmap -option caps:super
 
