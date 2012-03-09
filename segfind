@@ -7,6 +7,6 @@
 ulimit -c unlimited
 "$@"
 if [[ "$?" -eq "139" ]]; then
-	gdb -q "$1" "core_$1" -x ~/bin/backtrace
+	gdb -q "$1" "$(basename $1)_core" -x ~/bin/backtrace
 fi
 
