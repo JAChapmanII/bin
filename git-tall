@@ -1,5 +1,5 @@
 #!/bin/bash
-# git-pall: "git pall" pushes to both my VPS and github at the same time
+# git-tall: "git tall" pushes tags to both my VPS and github at the same time
 
 declare -A rMap
 rMap[".config"]="conf-$(hostname)"
@@ -15,16 +15,16 @@ if [[ -n "${rMap[$repo]}" ]]; then
 	repo="${rMap[$repo]}"
 fi
 
-git push "git@jachapmanii.net:$repo"
+git push --tags "git@jachapmanii.net:$repo"
 
 if [[ -n "${ghMap[$repo]}" ]]; then
 	repo="${ghMap[$repo]}"
 fi
 
 if [[ -z "${users[$repo]}" ]]; then
-	git push "git@github.com:JAChapmanII/$repo"
+	git push --tags "git@github.com:JAChapmanII/$repo"
 else
-	git push "git@github.com:${users[$repo]}/$repo"
+	git push --tags "git@github.com:${users[$repo]}/$repo"
 fi
 
 wait
