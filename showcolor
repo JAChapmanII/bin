@@ -1,0 +1,14 @@
+#!/bin/bash
+# showcolor: show a simple color block in feh
+
+if [[ -z $1 ]]; then
+	echo "Usage: $0 <color> [dimensions]"
+fi
+dimensions="${2-300x300}"
+
+tmp="$(mktemp --suffix=.png)"
+convert -size "$dimensions" xc:white "$tmp"
+convert "$tmp" -fill "$1" -draw 'color 0, 0 reset' "$tmp"
+feh "$tmp"
+rm "$tmp"
+
