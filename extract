@@ -1,0 +1,34 @@
+#!/bin/bash
+# extract: attempt to extract archive without littering files all over
+
+function un_zip() {
+	base="$(echo "$@" | sed 's/\.zip$//g')"
+	echo "un_zip: base: $base"
+	if [[ -d "$base" ]]; then
+		echo "un_zip: uh-oh: $base: already exists"
+		return
+	fi
+	mkdir "$base"
+	unzip -d"$base" "$@"
+}
+
+function un_rar() {
+	echo "un_rar: ... hoping it's good ;)"
+	unrar x "$@"
+}
+
+if [[ -z $1 ]]; then
+	echo "Usage: $0 <file1> [... <fileN>]"
+	exit 0
+fi
+
+while [[ -n $1 ]]; do
+	fname="$1"; shift
+	echo "extract: Handling $fname"
+	case $fname in
+		*.zip) un_zip "$fname" ;;
+		*.rar) un_rar "$fname" ;;
+		*) echo "extract: uh-oh: $fname" ;;
+	esac
+done
+
