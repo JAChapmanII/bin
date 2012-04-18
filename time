@@ -1,0 +1,9 @@
+#!/bin/bash
+# time: simple wrapper that chooses between GNU time and bash time
+
+if [[ ! -x /usr/bin/time ]]; then
+	time "$@"
+else
+	/usr/bin/time -f "\n%C[%x]: %Uu %Ss %Ee %P %MK" -- "$@"
+fi
+
