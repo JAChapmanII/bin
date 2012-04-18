@@ -1,0 +1,138 @@
+#!/bin/bash
+# gcolor: shoddily written make/gcc colorizer
+
+declare -A VMAP
+declare -A VEMAP
+
+function gvar() { # {{{
+	var="$@"
+	echo "$(make -n -p | sed -rn "s/^$var\s+=\s+//p")"
+} # }}}
+function expand() { # {{{
+	var="$@"
+	if [[ -z "$(echo "$var" | grep -E "(\(|\))")" ]]; then
+		echo "$var"
+		return
+	fi
+	if [[ -z "$(echo "$var" | sed -n 's/\(.*\)$(.*)\(.*\)/\1\2/p')" ]]; then
+		vname="$(echo "$var" | sed -n -e 's/.*$(//' -e 's/).*//')"
+		expand $(gvar $vname)
+		return
+	fi
+	while [[ -n "$(echo "$var" | sed -n 's/.*$(.*).*/MATCH/p')" ]]; do
+		f="$(echo "$var" | sed -r 's/^([^$]*)\$\(([^)]+)\)(.*)/\1/')"
+		v="$(echo "$var" | sed -r 's/^([^$]*)\$\(([^)]+)\)(.*)/\2/')"
+		s="$(echo "$var" | sed -r 's/^([^$]*)\$\(([^)]+)\)(.*)/\3/')"
+		var=" $f$(gvar $v) $s "
+	done
+	echo "$var"
+} # }}}
+function gfetch() { # {{{
+	if [[ -z $(gvar "$@") ]]; then
+		return
+	fi
+	expand $(gvar "$@")
+} # }}}
+function vlookup() { # {{{
+	var="$1"
+	if [[ -n ${VEMAP["$var"]} ]]; then
+		echo ""
+		return
+	fi
+	if [[ -n ${VMAP["$var"]} ]]; then
+		echo "${VMAP[$var]}"
+		return
+	fi
+	val="$(echo $(gfetch $var))"
+	val="$(echo "$val" | sed -e 's/\./\\./g')"
+	if [[ -n $val ]]; then
+		VMAP["$var"]="$val"
+	else
+		VEMAP["$var"]="empty"
+	fi
+	echo "$val"
+	return
+} # }}}
+function descape() { # {{{
+	var="$1"; shift
+	rep="$(vlookup $var)"
+	res="$@"
+	if [[ -n $rep ]]; then
+		res="$(echo "$res" | sed -- "s/ $rep / $VCOLOR\${$var}$RESETV /g")"
+		res="$(echo "$res" | sed -- "s/^$rep /$VCOLOR\${$var}$RESETV /g")"
+		res="$(echo "$res" | sed -- "s/ $rep$/ $VCOLOR\${$var}$RESETV/g")"
+		res="$(echo "$res" | sed -- "s| $rep/| $VCOLOR\${$var}$RESETV/|g")"
+	fi
+	echo "$res"
+} # }}}
+
+function ffloc() { # {{{
+	file="$(echo "$@" | cut -d':' -f1)"
+	row="$(echo "$@" | cut -d':' -f2)"
+	col="$(echo "$@" | cut -d':' -f3)"
+
+	if [[ -n "$(echo "$file" | grep '\.\.')" ]]; then
+		file="$(realpath "$file")"
+	fi
+	pos="${PCOLOR}${row}${RESETC},${PCOLOR}${col}${RESETC}"
+	echo "${FCOLOR}$file${RESETC}[${pos}]:"
+} # }}}
+
+ECOLOR="\\e[0;31m"
+FCOLOR="\\e[4;32m"
+WCOLOR="\\e[0;36m"
+PCOLOR="\\e[4;32m"
+RESETC="\\e[0m"
+# guh, double escaped...
+VCOLOR="\\\\e[0;35m"
+RESETV="\\\\e[0m"
+
+DVARS=(CXX CXXFLAGS CC CFLAGS LDFLAGS SDIR ODIR BDIR)
+# cache the results of looking up/resolving the above variables
+for ((i = 0; i < ${#DVARS[@]}; ++i)); do
+	vlookup ${DVARS[$i]} &>/dev/null
+done
+
+IFS=$'\n'
+while read line; do
+	kword="$(echo "$line" | cut -d':' -f4)"
+	kword="$(echo $kword | sed -r -e 's/^[ \t]+//' -e 's/[ \t]+$//')"
+	if [[ -n $(echo "$kword" | grep -E "(warning|error)") ]]; then
+		fname="$(echo "$line" | cut -d':' -f1)"
+		row="$(echo "$line" | cut -d':' -f2)"
+		col="$(echo "$line" | cut -d':' -f3)"
+		rest="$(echo "$line" | cut -d':' -f5-85)"
+
+		color=
+		case $kword in
+			warning) color="$WCOLOR" ;;
+			error)   color="$ECOLOR" ;;
+			*)                       ;;
+		esac
+
+		echo -e "$(ffloc $fname:$row:$col) ${color}$kword${RESETC}:$rest"
+	elif [[ -n $(echo "$line" | grep "^In file included from ") ]]; then
+		path="$(echo "$line" | sed -e 's/^In file included from //' -e 's/,$//')"
+		echo -e "In file included from $(ffloc $path)"
+	else
+		# maybe some other generic error
+		fname="$(echo "$line" | cut -d':' -f1)"
+		if [[ -f $fname ]]; then
+			rowcol="$(echo "$line" | cut -d':' -f2-3 | sed 's/^[ \t]*//')"
+			if [[ -n "$(echo $rowcol | grep '[0-9]\+:[0-9]\+')" ]]; then
+				rest="$(echo "$line" | cut -d':' -f4-84)"
+				echo -e "$(ffloc $fname:$rowcol)$rest"
+			else
+				rest="$(echo "$line" | cut -d':' -f2-82)"
+				echo -e "${FCOLOR}$fname${RESETC}: $rest"
+			fi
+		else
+			for ((i = 0; i < ${#DVARS[@]}; ++i)); do
+				line="$(descape "${DVARS[$i]}" "$line")"
+			done
+
+			echo -e "$line"
+		fi
+	fi
+done | sed 's/\([^ \t]\+\)[ \t]\+/\1 /g'
+
