@@ -1,0 +1,29 @@
++ /etc/
++ /home/
++ /root/
++ /srv/
++ /var/log/
+
++ /bin/
++ /boot/
++ /lib/
++ /lib64/
++ /opt/
++ /sbin/
++ /sys/
++ /tmp/
++ /usr/
++ /var/
+
+- /dev/
+- /media/
+- /mnt/
+- /proc/
+- /pts/
+- /run/
+- lost+found/
+
+- /fastboot
+- /aquota.group
+- /aquata.user
+

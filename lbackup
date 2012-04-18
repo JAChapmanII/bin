@@ -1,0 +1,20 @@
+#!/bin/sh
+# rsync backup script
+
+RATE=" --bwlimit=2400 "
+DTAG=`date +'%Y.%j.%H.%M.%S'`
+BDIR="/mnt/enext/frost_backup/"
+
+if [[ -z $1 ]]; then
+	echo "Usage: $0 <exclude file>"
+	echo "the normal exclued file is ~/bin/.lbackup.lst"
+	exit 0
+fi
+
+DIR="lbackup-frost-$DTAG"
+
+mkdir $BDIR/$DIR
+rsync -av --delete-excluded --exclude-from=$1 \
+	$RATE -e ssh root@frost.JAChapmanII.net:/ $BDIR/$DIR
+touch $BDIR/$DIR/BACKUP
+
