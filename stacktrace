@@ -1,0 +1,8 @@
+#!/bin/bash
+# stacktrace: run a program and provide a backtrace through gdb if it segfaults.
+
+# Add this to /etc/sysctl.conf to set the core dump file names
+#   kernel.core_pattern = %e_core
+
+gdb -q "$1" "$(basename $1)_core" -x ~/bin/backtrace
+
