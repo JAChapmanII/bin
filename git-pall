@@ -15,7 +15,7 @@ if [[ -n "${rMap[$repo]}" ]]; then
 	repo="${rMap[$repo]}"
 fi
 
-git push "git@jachapmanii.net:$repo"
+git push "git@frost.jachapmanii.net:$repo"
 
 if [[ -n "${ghMap[$repo]}" ]]; then
 	repo="${ghMap[$repo]}"
