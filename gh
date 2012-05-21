@@ -92,16 +92,6 @@ function create() {
 	fi
 }
 
-function push() {
-	repo="${1-$(basename $(pwd))}"
-
-	if [[ "jail" == $repo ]]; then
-		git push "git@github.com:CodeBlock/Jail"
-	else
-		git push "git@github.com:JAChapmanII/$repo"
-	fi
-}
-
 command="$1"; shift
 case $command in
 	exists)
