@@ -79,6 +79,7 @@ function ffloc() { # {{{
 } # }}}
 
 ECOLOR="\\e[0;31m"
+DCOLOR="\\e[4;31m"
 FCOLOR="\\e[4;32m"
 WCOLOR="\\e[0;36m"
 PCOLOR="\\e[4;32m"
@@ -97,7 +98,7 @@ IFS=$'\n'
 while read line; do
 	kword="$(echo "$line" | cut -d':' -f4)"
 	kword="$(echo $kword | sed -r -e 's/^[ \t]+//' -e 's/[ \t]+$//')"
-	if [[ -n $(echo "$kword" | grep -E "(warning|error)") ]]; then
+	if [[ -n $(echo "$kword" | grep -E "(warning|error|fatal error)") ]]; then
 		fname="$(echo "$line" | cut -d':' -f1)"
 		row="$(echo "$line" | cut -d':' -f2)"
 		col="$(echo "$line" | cut -d':' -f3)"
@@ -105,9 +106,10 @@ while read line; do
 
 		color=
 		case $kword in
-			warning) color="$WCOLOR" ;;
-			error)   color="$ECOLOR" ;;
-			*)                       ;;
+			warning)     color="$WCOLOR" ;;
+			error)       color="$ECOLOR" ;;
+			fatal*error) color="$DCOLOR" ;;
+			*)                           ;;
 		esac
 
 		echo -e "$(ffloc $fname:$row:$col) ${color}$kword${RESETC}:$rest"
