@@ -19,7 +19,7 @@ if [[ -n "$(cat $main.d | perl -ne '
 		if(m/^\s*import\s+([^;]*\s*,\s*)*etc.c.curl(\s*,\s*+[^;]*)?\s*;/) {
 			print"$_";
 		}')" ]]; then
-	LDFLAGS="${LDFLAGS} -L-lcurl"
+	LDFLAGS="${LDFLAGS} -L-lcurl -L-lssl"
 fi
 
 if [[ "$main.d" -nt "$main" ]]; then
