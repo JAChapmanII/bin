@@ -1,0 +1,66 @@
+#!/bin/bash
+# email_dedup: badly written script to output a script removing all duplicate
+#   files from one directory and hard linking them to their copy in another
+#   directory. When looking for duplicates, we ignore files that already have
+#   more than one link as those have probably already been handled by this
+#   script. Rehandling these files has no negative effects other than speed.
+
+if [[ -z "$1" ]]; then
+	echo "Usage: $0 <root email folder> [<base email folder>]"
+	echo "    Creates script to hardlink all duplicates in <root> into <base>"
+	echo "      note: <base> can be (and usually is) inside <root>"
+	exit 0
+fi
+
+root="${1%/}"
+if [[ ! -d "$root" ]]; then
+	echo "error: $root: not a directory"
+	exit 1
+fi
+
+base="$2"
+[[ -z $base ]] && base="$root/[Gmail].All Mail"
+
+if [[ ! -d "$base" ]]; then
+	echo "error: $base: not a directory"
+	exit 2
+fi
+
+echo "Hardlinking duplicates from \"$root\" into \"$base\"..."
+
+tmp1="$(mktemp)"; tmp2="$(mktemp)"
+echo "  finding and summing all files..."
+# -links 1 means we ignore files that may have already been hardlinked
+find "$root" -type f -links 1 -print0 | xargs -0 sha512sum | sort > "$tmp1"
+find "$base" -type f -print0 | xargs -0 sha512sum | sort > "$tmp2"
+
+echo "  removing base sums from root sums..."
+comm -2 -3 "$tmp1" "$tmp2" | sponge "$tmp1"
+
+tmp3="$(mktemp)"; tmp4="$(mktemp)"; tmp5="$(mktemp)"
+echo "  getting sums of duplicate files..."
+cut -c1-128 "$tmp1" | sort -u > "$tmp3"
+cut -c1-128 "$tmp2" | sort -u > "$tmp4"
+comm -1 -2 "$tmp3" "$tmp4" | sort -u > "$tmp5"
+rm "$tmp3" "$tmp4"
+mv "$tmp5" "$tmp3"
+
+rm -f dedup.sh
+
+if [[ "$(wc -l "$tmp3" | cut -d' ' -f1)" == "0" ]]; then
+	echo "  found no duplicates"
+else
+	echo "  creating dedup.sh script..."
+	echo "#!/bin/bash" > dedup.sh
+	while read sum; do
+		basef="$(grep "^$sum  " "$tmp2" | cut -c131-)"
+		grep "^$sum " "$tmp1" | cut -c131- | while read rootf; do
+			echo "rm \"$rootf\"; ln \"$basef\" \"$rootf\"" >> dedup.sh
+		done
+	done < "$tmp3"
+	chmod +x dedup.sh
+fi
+
+echo "  cleaning up..."
+rm -f "$tmp1" "$tmp2" "$tmp3"
+
