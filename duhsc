@@ -2,7 +2,7 @@
 # duhsc: simple way to figure out space usage in a directory
 
 if [[ -z $1 ]]; then
-	find ./ -mindepth 1 -maxdepth 1 -print0 | xargs -0 du -x --si -sc | \
+	find ./ -mindepth 1 -maxdepth 1 -print0 | xargs -0 du -xhsc | \
 		sort -h | grep -v '^0\s'
 else
 	while [[ -n $1 ]]; do
@@ -12,6 +12,6 @@ else
 			printf "%s\0" "$1"
 		fi
 		shift
-	done | xargs -0 du -x --si -sc | sort -h | grep -v '^0\s'
+	done | xargs -0 du -xhsc | sort -h | grep -v '^0\s'
 fi
 
