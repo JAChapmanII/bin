@@ -1,0 +1,24 @@
+#!/bin/bash
+# mtimer: present a simple countdown following a series of times until 0
+
+if [[ -z $1 ]]; then
+	echo "Usage: $0 <time1> [<time2> ...[<timeN>]]"
+	echo "Provides a countdown starting at time1 and saying the time at all"
+	echo "steps. Times are in minutes"
+	exit 0
+fi
+
+last=$1
+shift
+while [[ -n $1 ]]; do
+	echo "$last minutes left"
+	diff=$((last - $1))
+	last=$1
+	shift
+	sleep ${diff}m
+done
+
+echo "$last minutes left"
+sleep ${last}m
+echo "------ DONE ------"
+

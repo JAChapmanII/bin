@@ -1,0 +1,15 @@
+#!/bin/bash
+# mlogs: generate a simple logarithmic time decrease pattern for mtimer
+
+arg=${1-30}
+
+while (( arg > 5 )); do
+	echo $arg
+	arg=$((arg / 2))
+done
+
+while (( arg > 0)); do
+	echo $arg
+	arg=$((arg - 1))
+done
+
