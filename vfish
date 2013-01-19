@@ -1,0 +1,11 @@
+#!/bin/bash
+# vfish: run vim from a bash shell (for use in fish shell)
+
+export SHELL=$(which bash)
+com="vim"
+while [[ -n $1 ]]; do
+	com+=" \"$1\"";
+	shift
+done
+bash -c "$com"
+
