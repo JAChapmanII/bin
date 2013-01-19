@@ -1,0 +1,11 @@
+#!/bin/bash
+# line: echo a specific line of a file
+
+if [[ -z $1 ]] || [[ -z $2 ]]; then
+	echo "Usage: $0 <line number> <file>"
+	echo "       echoes that line from the file"
+	exit 0
+fi
+
+head -n $1 $2 | tail -1
+
