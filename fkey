@@ -1,0 +1,13 @@
+#!/bin/bash
+# fkey: fix the keyboard layout and settings
+
+setxkbmap dvorak
+setxkbmap -option caps:super
+
+xset m 2.5 7
+xset r rate 160 80
+
+numlockx
+
+xkbset nullify lock
+
