@@ -1,0 +1,12 @@
+#!/bin/bash
+# tmux-www: open links in a tmux session
+
+SNAME="www"
+
+tmux has-session -t $SNAME
+if [[ $? != 0 ]]; then
+	tmux new-session -d -s $SNAME links
+fi
+
+xvt_r -e tmux attach-session -t $SNAME
+

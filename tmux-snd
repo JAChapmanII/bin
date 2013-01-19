@@ -1,0 +1,17 @@
+#!/bin/bash
+# tmux-snd: open ncmpcpp and alsamixer in a tmux session, possibly start mpd
+
+SNAME="snd"
+
+if [[ -z $(pgrep mpd) ]] && [[ -d $(readlink ${HOME}/Music) ]]; then
+	mpd &
+fi
+
+tmux has-session -t $SNAME
+if [[ $? != 0 ]]; then
+	tmux new-session -d -s $SNAME -y 92 alsamixer
+	tmux split-window -t $SNAME -l 70 ncmpcpp
+fi
+
+xvt_r -e tmux attach-session -t $SNAME
+

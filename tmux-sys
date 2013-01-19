@@ -1,0 +1,21 @@
+#!/bin/bash
+# tmux-sys: open two configs of htop stacked in a tmux session
+
+SNAME="sys"
+
+tmux has-session -t $SNAME
+if [[ $? != 0 ]]; then
+	HTOPRC="/home/jac/.config/htop/htoprc"
+	cp "$HTOPRC-sys" "$HTOPRC"
+	sleep .1
+	tmux new-session -d -s $SNAME -y 92 htop
+	sleep .1
+	cp "$HTOPRC-mem" "$HTOPRC"
+	sleep .1
+	tmux split-window -t $SNAME htop
+	sleep .1
+	cp "$HTOPRC-sys" "$HTOPRC"
+fi
+
+xvt_r -e tmux attach-session -t $SNAME
+
