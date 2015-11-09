@@ -1,0 +1,6 @@
+#!/bin/bash
+# mkproj_gismu: make a project name using /dev/urandom.
+#    the generated name matches gismu rules (at least superficially)
+
+mkproj '[:lower:]' 5 '[^aoeiu]([aoeiu][^aoeiu]|[^aoeiu][aoeiu])[^aoeiu][aoeiu]'
+

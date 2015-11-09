@@ -1,0 +1,12 @@
+#!/bin/bash
+# mkproj: make a project name using /dev/urandom.
+#    defaults to being just :lower: and 4 long, with 'oy' in it. The first
+#    argument is a substitute alphabet, the second is a substitute length, and
+#    the last a substitute for a 'must match' pattern
+
+SET="${1-[:lower:]}"
+LEN="${2-4}"
+KEY="${3-oy}"
+
+cat /dev/urandom | tr -dc "$SET" | fold -w $LEN | grep -E ${KEY} | head
+

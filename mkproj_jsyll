@@ -1,0 +1,18 @@
+#!/bin/bash
+# mkproj_jsyll: make a project name using syllables
+
+js="a i u e o ka ki ku ke ko ta chi tsu te to sa shi su se so na ni nu ne no n ha hi fu he ho ma mi mu me mo ya yu yo ra ri ru re ro wa wo"
+
+function genName() {
+	s1="$(echo "$js" | tr ' ' '\n' | shuf | head -1)"
+	s2="$(echo "$js" | tr ' ' '\n' | shuf | head -1)"
+	s3="$(echo "$js" | tr ' ' '\n' | shuf | head -1)"
+	echo ${s1}${s2}${s3}
+}
+
+count="${1-10}"
+
+while true; do
+	genName
+done | head -n "${count}"
+
