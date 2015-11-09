@@ -1,17 +1,5 @@
 #!/bin/bash
-# duhsc: simple way to figure out space usage in a directory
+# duhsc: simple way to figure out space usage in a directory (sorted)
 
-if [[ -z $1 ]]; then
-	find ./ -mindepth 1 -maxdepth 1 -print0 | xargs -0 du -xhsc | \
-		sort -h | grep -v '^0\s'
-else
-	while [[ -n $1 ]]; do
-		if [[ -d $1 ]]; then
-			find "$1" -mindepth 1 -maxdepth 1 -print0
-		else
-			printf "%s\0" "$1"
-		fi
-		shift
-	done | xargs -0 du -xhsc | sort -h | grep -v '^0\s'
-fi
+duhsc-ns "$@" | sort -h | grep -v '^0\s'
 
