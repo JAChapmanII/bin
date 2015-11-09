@@ -1,9 +1,12 @@
-#!/bin/sh
-# xvt_r: run an instance of the urxvt client (starts daemon if needed)
+#!/bin/bash
+# xvt_r: run a termnal window, possibly with some options
 
-if [ -z `pgrep urxvtd` ]; then
-	urxvtd -q -o -f
+opts=""
+TERM="konsole"
+
+if [[ -n $1 ]]; then
+	opts="${opts} -e $@"
 fi
 
-exec urxvtc "$@"
+exec ${TERM} ${opts}
 
