@@ -2,9 +2,19 @@
 # mkpass: make a password using /dev/urandom.
 #    defaults to being the full :graph: alphabet and 20 long. The first
 #    argument is a substitute alphabet and the second is a substitute length
+#    bookends password with b58 data for easy copy+paste
+
+b58="rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"
+b58_buf="$(cat /dev/urandom | tr -dc "$b58" | fold -w 80 | head -1)"
+b58_p1=0
+b58_p2=4
 
 SET="${1-[:graph:]}"
 LEN="${2-20}"
 
-cat /dev/urandom | tr -dc "$SET" | fold -w $LEN | head
+cat /dev/urandom | tr -dc "$SET" | fold -w $LEN | head | while read -r line; do
+	echo "${b58_buf:$b58_p1:4}${line}${b58_buf:$b58_p2:4}"
+	b58_p1=$((b58_p1 + 8))
+	b58_p2=$((b58_p1 + 4))
+done
 
