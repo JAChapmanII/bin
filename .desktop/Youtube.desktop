@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Type=Application
+Name=YouTube
+Exec=/usr/bin/chromium --app=http://www.youtube.com/
+Icon=chrome-http___www.youtube.com_
+StartupWMClass=www.youtube.com

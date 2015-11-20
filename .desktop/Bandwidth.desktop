@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Name=192.168.11.1/graph_if.svg?eth1
+Exec=chromium "--app=http://192.168.11.1/graph_if.svg?eth1"
+Terminal=false
+Icon=chrome-http___192.168.11.1_graph_if.svg_eth1
+Type=Application
+Categories=GTK;Network;WebBrowser;
+StartupWMClass=192.168.11.1__graph_if.svg
+

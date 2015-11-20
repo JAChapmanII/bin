@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# light scheme
+STYLE="-nb #fff -nf #666 -sb #fff -sf #28b"
+#STYLE="-nb #fff -nf #888 -sb #fff -sf #159"
+# dark scheme
+#STYLE="-nf #fff -nb #000 -sf #28c -sb #000"
+
+PROGS=""
+INTER="chromium uzbl-tabbed skype"
+CREAT="blender gimp sshot kdevelop"
+GAMES="steam minecraft supcom2 kbreakout lbreakout2 revenge"
+VIRTU="VirtualBox logisim slock"
+IMAGE="feh gwenview"
+MUSIC="amarok"
+VIDEO="vlc"
+MEDIA="okular xpdf dolphin"
+
+mkdir -p ~/bin/.desktop
+FBIN="$(find ~/bin/ -mindepth 0 -maxdepth 1 -executable -type f -printf '%f\n')"
+DBIN="$(find ~/bin/.desktop -mindepth 0 -maxdepth 1 -type f -printf '%f\n')"
+
+PROGS="${INTER} ${CREAT} ${GAMES} ${VIRTU} \
+	${IMAGE} ${MUSIC} ${VIDEO} ${MEDIA} ${FBIN} ${DBIN}"
+
+selection="$(echo ${PROGS} | tr ' ' '\n' | dmenu -i ${STYLE})"
+if [[ -n $(echo $selection | grep .desktop) ]]; then
+	exec dopen ~/bin/.desktop/$selection
+else
+	exec $selection
+fi
+

@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Type=Application
+Name=localhost:5081/static/graph_if.svg?enp7s0
+Exec=/usr/bin/chromium "--app=http://localhost:5081/static/graph_if.svg?enp7s0"
+Icon=chrome-http___localhost_5081_static_graph_if.svg_enp7s0
+StartupWMClass=localhost__static_graph_if.svg
